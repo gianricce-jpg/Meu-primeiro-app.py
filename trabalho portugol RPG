@@ -1,0 +1,100 @@
+programa {
+  inclua biblioteca Util --> u
+
+  funcao inicio() {
+
+    cadeia nome
+    inteiro vida_player = 100, vida_boss = 200, opcao, dano
+    real multiplicador_critico = 1.5
+    logico esta_vivo = verdadeiro
+
+
+    cadeia mochila[3] = {"Poção de Vida", "Poção de Força", "Bomba"}
+
+    escreva("Olá grande aventureiro, qual é seu nome? ")
+    leia(nome)
+
+
+    escreva("\n---PROCESSANDO---\n")
+    para (inteiro i = 0; i < 3; i++) {
+      u.aguarde(u.sorteia(500, 1000)) 
+    }
+
+    escreva("\nBem-vindo, ", nome, "! Você entrou na arena do Boss!\n")
+
+    faca {
+      escreva("\n---MENU DE BATALHA---")
+      escreva("\nVida ", nome, ": ", vida_player, " | Vida Boss: ", vida_boss)
+      escreva("\n[1] Atacar o Boss")
+      escreva("\n[2] Abrir Mochila")
+      escreva("\n[3] Fugir")
+      escreva("\nEscolha: ")
+      leia(opcao)
+
+      escolha(opcao) {
+        
+        caso 1:
+          // Turno do Jogador
+          dano = u.sorteia(25, 40)
+          vida_boss = vida_boss - dano
+          escreva("\nVocê atacou e causou ", dano, " de dano!")
+          
+          u.aguarde(1500)
+
+          se (vida_boss > 0) {
+            dano = u.sorteia(10, 25)
+            vida_player = vida_player - dano
+            escreva("\nO Boss rugiu e te causou ", dano, " de dano!\n")
+          }
+          u.aguarde(2200)
+        pare
+
+        caso 2:
+          limpa()
+          escreva("--- SUA MOCHILA ---\n")
+          para (inteiro i = 0; i < 3; i++) {
+            escreva(i + 1, ". ", mochila[i], "\n")
+          }
+          
+          inteiro escolha_item
+          escreva("\nQual item deseja usar? (1, 2 ou 3): ")
+          leia(escolha_item)
+
+          se (escolha_item == 1) {
+            vida_player = vida_player + 30
+            escreva("\nVocê usou a Poção! +30 de vida.\n")
+            mochila[0] = "Vazio"
+          } 
+      se (escolha_item == 2) {
+          escreva("\nVocê usou a Poção de Força! Seu próximo ataque será brutal.\n")
+            multiplicador_critico = 1.0 + (u.sorteia(5, 20) / 10.0) 
+          }
+          senao se (escolha_item == 3) {
+            vida_boss = vida_boss - 50
+            escreva("\nBUM! A Bomba tirou 50 de vida do Boss!\n")
+            mochila[2] = "Vazio"
+          }
+          senao {
+            escreva("\nOpção inválida ou mochila vazia!\n")
+          }
+          
+          u.aguarde(2000)
+        pare
+
+        caso 3:
+          escreva("\nVocê fugiu como um covarde...")
+          esta_vivo = falso
+        pare
+      }
+
+      se (vida_player <= 0) {
+        escreva("\n--- GAME OVER --- Você pereceu lutando.")
+        esta_vivo = falso
+      } senao se (vida_boss <= 0) {
+        escreva("\n--- VITÓRIA GLORIOSA --- Você derrotou o Boss!")
+        esta_vivo = falso
+      }
+
+    } enquanto (esta_vivo == verdadeiro)
+  }
+}
